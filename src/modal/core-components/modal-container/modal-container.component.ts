@@ -2,7 +2,7 @@ import { Component, Type, input, ChangeDetectionStrategy } from '@angular/core';
 import { ModalState } from '@modal/ts/modal-state.interface';
 import { modalTypeMapper } from '@modal/ts';
 import { NgComponentOutlet } from '@angular/common';
-import { ModalBaseComponent } from '@modal/core-components/modal-base/modal-base.component';
+
 
 @Component({
 	selector: 'app-modal-container',
@@ -14,7 +14,7 @@ import { ModalBaseComponent } from '@modal/core-components/modal-base/modal-base
 export class ModalContainerComponent {
 	public modalState = input.required<ModalState>();
 
-	get activeModal(): Type<ModalBaseComponent> {
+	get activeModal(): Type<unknown> {
 		return modalTypeMapper[this.modalState().type];
 	}
 }

@@ -1,8 +1,9 @@
-import { Injectable, signal, computed, WritableSignal } from '@angular/core';
+import { Injectable, signal, computed, WritableSignal, inject } from '@angular/core';
 import { timer } from 'rxjs';
 import { ModalState } from '@modal/ts/modal-state.interface';
 import { ModalType } from '@modal/ts/modal-type.enum';
 import { ModalData } from '@modal/ts/modal-data.type';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'root',
@@ -17,6 +18,9 @@ export class ModalService {
 	});
 	public closeAnimationSpeed = 300;
 	public modalState = this.state.asReadonly();
+
+	private readonly router = inject(Router);
+	private readonly actRouter = inject(ActivatedRoute);
 
 	public get stateValue(): ModalState {
 		return this.state();
@@ -85,14 +89,15 @@ export class ModalService {
 		});
 	}
 
-	public showNextModalImmediate(
-		type: ModalType,
-		withOverlay: boolean = true,
-		data?: ModalData
-	) {
+	public toggleModal(type: ModalType, withOverlay: boolean = true, data?: ModalData) {
 		this.closeModal();
 		timer(this.closeAnimationSpeed).subscribe(() => {
 			this.openModal(type, withOverlay, data);
 		});
+	}
+
+	async closeAndNavigate(link: string) {
+		await this.router.navigate([link], { relativeTo: this.actRouter });
+		timer(this.closeAnimationSpeed).subscribe(() => this.closeModal());
 	}
 }
