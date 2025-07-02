@@ -1,0 +1,14 @@
+.exit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__title {
+    width: 100%;
+    text-align: center;
+  }
+
+  &__btn {
+    width: calc(50% - 0.5rem);
+  }
+}

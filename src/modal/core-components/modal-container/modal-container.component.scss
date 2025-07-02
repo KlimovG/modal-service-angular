@@ -1,0 +1,70 @@
+.modal{
+  &-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    transition: opacity 300ms;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    background: transparent;
+    opacity: 0;
+
+    &::after{
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      backdrop-filter: blur(4px);
+      background: var(--blur);
+      opacity: 0;
+      transition: opacity 300ms ease-in,  backdrop-filter 300ms;
+    }
+
+    &.with-overlay.open {
+      &::after{
+        opacity: 1;
+
+      }
+    }
+
+    &.with-overlay.close {
+      &::after{
+        opacity: 0;
+
+      }
+    }
+
+    &.open {
+      opacity: 1;
+      transition-timing-function: ease-in;
+    }
+    &.close {
+      opacity: 0;
+      transition-timing-function: ease-in;
+    }
+  }
+
+  &-component{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    transition: transform 300ms;
+    transform: translateY(100%);
+
+    &.open {
+      transform: translateY(0);
+    }
+
+    &.close {
+      transform: translateY(100%);
+      transition-timing-function: ease-in;
+    }
+  }
+}
