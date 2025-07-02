@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { ModalType } from '@modal/ts';
 import { ModalService } from '@modal/service/modal.service';
 
 @Component({
@@ -18,11 +17,10 @@ import { ModalService } from '@modal/service/modal.service';
 	standalone: true,
 })
 export class ModalExitComponent {
-	readonly ModalType = ModalType;
 	private readonly modalService: ModalService = inject(ModalService);
 
 	toggleModal() {
-		this.modalService.toggleModal(ModalType.EXIT);
+		this.modalService.toggleModal(ModalExitComponent);
 	}
 
 	closeModal() {

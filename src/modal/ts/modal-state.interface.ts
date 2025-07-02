@@ -1,10 +1,10 @@
 import { ModalShowAnimationType } from './modal-show-animation.type';
-import { ModalType } from './modal-type.enum';
+import { Type, TemplateRef } from '@angular/core';
 import { ModalData } from './modal-data.type';
 
 export interface ModalState {
 	isOpen: boolean;
-	type: ModalType;
+	content: Type<any> | TemplateRef<any>;
 	animation: ModalShowAnimationType;
 	withOverlay?: boolean;
 	data?: ModalData;

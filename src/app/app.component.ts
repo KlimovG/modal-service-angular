@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { SmartModalContainerComponent, ModalService, ModalType } from "../modal";
+import { SmartModalContainerComponent, ModalService } from "../modal";
+import { ModalExitComponent } from '@modal/components/modal-exit/modal-exit.component';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,6 @@ export class AppComponent {
   private readonly modalService: ModalService = inject(ModalService);
 
   openModal() {
-    this.modalService.openModal(ModalType.EXIT);
+    this.modalService.openModal(ModalExitComponent);
   }
 }

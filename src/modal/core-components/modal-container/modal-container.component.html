@@ -9,9 +9,16 @@
 		[style.visibility]="modalState().isOpen ? 'visible' : 'hidden'"
 		[class.open]="modalState().animation === 'open'"
 		[class.close]="modalState().animation === 'close'">
-		<ng-container
-			[ngComponentOutlet]="activeModal"
-			[ngComponentOutletInputs]="modalState().data">
-		</ng-container>
+		@if (templateContent()) {
+			<ng-container
+				[ngTemplateOutlet]="templateContent()"
+				[ngTemplateOutletContext]="modalState().data"
+			></ng-container>
+		} @else if (componentContent()) {
+			<ng-container
+				[ngComponentOutlet]="componentContent()"
+				[ngComponentOutletInputs]="modalState().data">
+			</ng-container>
+		}
 	</div>
 </div>

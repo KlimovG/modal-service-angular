@@ -13,7 +13,7 @@
 Импортируйте `ModalService`, `SmartModalContainerComponent` и необходимые типы из главной точки входа:
 
 ```typescript
-import { ModalService, SmartModalContainerComponent, ModalType, ModalData } from './modal';
+import { ModalService, SmartModalContainerComponent, ModalData } from './modal';
 // Если папка modal находится в src, то путь будет примерно такой: 'src/modal'
 ```
 
@@ -49,11 +49,12 @@ export class AppComponent {
 
 ### Открытие модального окна
 
-Для открытия модального окна используйте `ModalService`:
+Для открытия модального окна используйте `ModalService`, передавая ссылку на компонент или `TemplateRef`:
 
 ```typescript
-import { Component, inject } from '@angular/core';
-import { ModalService, ModalType, ModalData } from './modal'; // Укажите правильный путь
+import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
+import { ModalService, ModalData } from './modal'; // Укажите правильный путь
+import { ModalExitComponent } from '@modal/components/modal-exit/modal-exit.component';
 
 @Component({
   // ...
@@ -61,20 +62,32 @@ import { ModalService, ModalType, ModalData } from './modal'; // Укажите 
 export class YourComponent {
   private readonly modalService: ModalService = inject(ModalService);
 
+  @ViewChild('myTemplate') myTemplate: TemplateRef<any>;
+
   openExitModal() {
-    this.modalService.openModal(ModalType.EXIT);
+    this.modalService.openModal(ModalExitComponent);
   }
 
   openCustomModalWithData() {
     const data: ModalData = { id: 1, name: 'Пример данных' };
-    this.modalService.openModal(ModalType.CUSTOM_MODAL, true, data);
+    this.modalService.openModal(ModalExitComponent, true, data);
+  }
+
+  openTemplateModal() {
+    this.modalService.openModal(this.myTemplate);
   }
 }
 ```
 
-*   `ModalType.EXIT`: Пример типа модального окна. Вам нужно определить свои типы модальных окон в `src/modal/ts/modal-type.enum.ts` и связать их с компонентами в `src/modal/ts/modal-type.mapper.ts`.
-*   `withOverlay`: `boolean` (по умолчанию `true`) - определяет, показывать ли оверлей.
-*   `data`: `ModalData` (опционально) - любые данные, которые вы хотите передать в открываемое модальное окно. Эти данные будут доступны через `input()` в компоненте модального окна.
+Для передачи данных в компонент модального окна используйте третий аргумент `data`. Эти данные будут доступны через `input()` в компоненте модального окна. Если вы используете `TemplateRef`, данные будут доступны через контекст шаблона.
+
+```html
+<!-- Пример использования TemplateRef в вашем компоненте -->
+<ng-template #myTemplate let-data>
+  <h2>Привет, {{ data.name }}!</h2>
+  <p>Твой ID: {{ data.id }}</p>
+</ng-template>
+```
 
 ### Закрытие модального окна
 
@@ -89,22 +102,27 @@ this.modalService.closeModal();
 Для закрытия текущего и открытия нового модального окна:
 
 ```typescript
-this.modalService.toggleModal(ModalType.NEW_MODAL);
+import { AnotherModalComponent } from './another-modal.component'; // Ваш новый компонент
+this.modalService.toggleModal(AnotherModalComponent);
 ```
 
 ### Добавление новых модальных окон
 
-1.  Создайте новый компонент модального окна (например, `src/app/custom-modal/custom-modal.component.ts`). Убедитесь, что он является `standalone` компонентом и наследует от `ModalBaseComponent`.
-2.  Добавьте новый тип модального окна в `src/modal/ts/modal-type.enum.ts`.
-3.  Свяжите новый тип с вашим компонентом в `src/modal/ts/modal-type.mapper.ts`:
+1.  Создайте новый компонент модального окна (например, `src/app/custom-modal/custom-modal.component.ts`). Убедитесь, что он является `standalone` компонентом.
+2.  Если вашему модальному компоненту нужны методы для управления модальным окном (закрытие, переключение), вы можете инъецировать `ModalService` напрямую:
 
     ```typescript
-    import { CustomModalComponent } from '../../app/custom-modal/custom-modal.component'; // Укажите правильный путь
+    import { Component, inject } from '@angular/core';
+    import { ModalService } from '@modal/service/modal.service';
 
-    export const modalTypeMapper: Record<ModalType, Type<ModalBaseComponent>> = {
-      [ModalType.EXIT]: ModalExitComponent,
-      [ModalType.CUSTOM_MODAL]: CustomModalComponent,
-    };
+    @Component({
+      selector: 'app-custom-modal',
+      standalone: true,
+      template: `<button (click)="modalService.closeModal()">Закрыть</button>`,
+    })
+    export class CustomModalComponent {
+      private readonly modalService: ModalService = inject(ModalService);
+    }
     ```
 
 Это основные шаги для начала работы с вашим `portal-service` в других проектах. Если у вас возникнут дополнительные вопросы, Егор, дайте мне знать! 

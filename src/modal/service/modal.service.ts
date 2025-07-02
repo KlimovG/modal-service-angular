@@ -1,7 +1,6 @@
-import { Injectable, signal, computed, WritableSignal, inject } from '@angular/core';
+import { Injectable, signal, computed, WritableSignal, inject, Type, TemplateRef } from '@angular/core';
 import { timer } from 'rxjs';
 import { ModalState } from '@modal/ts/modal-state.interface';
-import { ModalType } from '@modal/ts/modal-type.enum';
 import { ModalData } from '@modal/ts/modal-data.type';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -11,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ModalService {
 	private modalQueue: WritableSignal<ModalState[]> = signal<ModalState[]>([]);
 	private state: WritableSignal<ModalState> = signal<ModalState>({
-		type: null,
+		content: null,
 		isOpen: false,
 		animation: null,
 		withOverlay: true,
@@ -29,12 +28,12 @@ export class ModalService {
 	public modalQueueLength = computed(() => this.modalQueue().length);
 
 	public openModal(
-		type: ModalType,
+		content: Type<any> | TemplateRef<any>,
 		withOverlay: boolean = true,
 		data?: ModalData
 	) {
 		const newModal: ModalState = {
-			type,
+			content,
 			isOpen: false,
 			animation: null,
 			withOverlay,
@@ -56,7 +55,7 @@ export class ModalService {
 			this.state.set(modal);
 		} else {
 			this.state.set({
-				type: null,
+				content: null,
 				isOpen: false,
 				animation: null,
 				withOverlay: true,
@@ -79,7 +78,7 @@ export class ModalService {
 				this.showNextModal();
 			} else {
 				this.state.set({
-					type: null,
+					content: null,
 					isOpen: false,
 					animation: null,
 					withOverlay: true,
@@ -89,10 +88,10 @@ export class ModalService {
 		});
 	}
 
-	public toggleModal(type: ModalType, withOverlay: boolean = true, data?: ModalData) {
+	public toggleModal(content: Type<any> | TemplateRef<any>, withOverlay: boolean = true, data?: ModalData) {
 		this.closeModal();
 		timer(this.closeAnimationSpeed).subscribe(() => {
-			this.openModal(type, withOverlay, data);
+			this.openModal(content, withOverlay, data);
 		});
 	}
 
