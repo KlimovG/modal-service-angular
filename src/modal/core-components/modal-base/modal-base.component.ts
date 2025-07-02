@@ -17,7 +17,6 @@ import { timer } from 'rxjs';
 @Component({
 	selector: 'app-modal-base',
 	template: '',
-	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalBaseComponent {

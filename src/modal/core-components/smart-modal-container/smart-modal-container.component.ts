@@ -8,7 +8,6 @@ import { ModalContainerComponent } from '@modal/core-components/modal-container/
 	template: ` <app-modal-container
 		[modalState]="modalState()"></app-modal-container>`,
 	imports: [ModalContainerComponent],
-	standalone: true,
 })
 export class SmartModalContainerComponent {
 	public modalState: Signal<ModalState>;

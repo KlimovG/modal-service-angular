@@ -8,7 +8,6 @@ import { ModalBaseComponent } from '@modal/core-components/modal-base/modal-base
 	selector: 'app-modal-container',
 	templateUrl: './modal-container.component.html',
 	styleUrl: './modal-container.component.scss',
-	standalone: true,
 	imports: [NgComponentOutlet],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
