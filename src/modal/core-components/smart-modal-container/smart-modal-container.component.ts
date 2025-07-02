@@ -8,6 +8,9 @@ import { ModalContainerComponent } from '@modal/core-components/modal-container/
 	template: ` <app-modal-container
 		[modalState]="modalState()"></app-modal-container>`,
 	imports: [ModalContainerComponent],
+	host: { 
+		'[style.--modal-animation-speed.ms]': 'service.closeAnimationSpeed',
+	},
 })
 export class SmartModalContainerComponent {
 	public modalState: Signal<ModalState>;

@@ -15,7 +15,7 @@ export class ModalService {
 		animation: null,
 		withOverlay: true,
 	});
-	private closeAnimationSpeed = 300;
+	public closeAnimationSpeed = 300;
 	public modalState = this.state.asReadonly();
 
 	public get stateValue(): ModalState {

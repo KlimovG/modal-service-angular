@@ -38,7 +38,7 @@ export class ModalBaseComponent {
 
 	toggleModal(type: ModalType, withOverlay: boolean = true, data?: ModalData) {
 		this.closeModal();
-		timer(300).subscribe(() => {
+		timer(this.modal.closeAnimationSpeed).subscribe(() => {
 			this.openModal(type, withOverlay, data);
 		});
 	}
@@ -49,6 +49,6 @@ export class ModalBaseComponent {
 
 	async closeAndNavigate(link: string) {
 		await this.router.navigate([link], { relativeTo: this.actRouter });
-		timer(300).subscribe(() => this.closeModal());
+		timer(this.modal.closeAnimationSpeed).subscribe(() => this.closeModal());
 	}
 }
