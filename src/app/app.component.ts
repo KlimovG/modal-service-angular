@@ -1,19 +1,19 @@
-import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
-import { SmartModalContainerComponent, ModalService } from "../modal";
-import { ModalTestComponent } from '@modal/components/modal-test/modal-test.component';
+import { Component, inject } from '@angular/core';
+import { SmartPortalContainerComponent, PortalService } from "../portal";
+import { ModalTestComponent } from '../portal/components/modal-test/modal-test.component';
 
 @Component({
   selector: 'app-root',
-  imports: [SmartModalContainerComponent],
+  imports: [SmartPortalContainerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'portal-service';
-  private readonly modalService: ModalService = inject(ModalService);
+  private readonly portalService: PortalService = inject(PortalService);
 
 
   openModal() {
-      this.modalService.openModal(ModalTestComponent, false, { name: 'Егор', id: 333 });
+      this.portalService.openPortal(ModalTestComponent, false, { name: 'Егор', id: 333 });
   }
 }

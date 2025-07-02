@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
-import { ModalService } from '@modal/service/modal.service';
+import { PortalService } from '../../service/portal.service';
 
 @Component({
 	selector: 'app-modal-test',
@@ -17,17 +17,17 @@ import { ModalService } from '@modal/service/modal.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalTestComponent {
-	private readonly modalService: ModalService = inject(ModalService);
+	private readonly modalService: PortalService = inject(PortalService);
 
 	openModal() {
-		this.modalService.openModal(ModalTestComponent);
+		this.modalService.openPortal(ModalTestComponent);
 	}
 
 	toggleModal() {
-		this.modalService.toggleModal(ModalTestComponent);
+		this.modalService.togglePortal(ModalTestComponent);
 	}
 
 	closeModal() {
-		this.modalService.closeModal();
+		this.modalService.closePortal();
 	}
 }

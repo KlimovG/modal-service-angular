@@ -1,15 +1,15 @@
 import { Injectable, signal, computed, WritableSignal, inject, Type, TemplateRef } from '@angular/core';
 import { timer } from 'rxjs';
-import { ModalState } from '@modal/ts/modal-state.interface';
-import { ModalData } from '@modal/ts/modal-data.type';
+import { PortalState } from '../ts/portal-state.interface';
+import { PortalData } from '../ts/portal-data.type';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class ModalService {
-	private modalQueue: WritableSignal<ModalState[]> = signal<ModalState[]>([]);
-	private state: WritableSignal<ModalState> = signal<ModalState>({
+export class PortalService {
+	private portalQueue: WritableSignal<PortalState[]> = signal<PortalState[]>([]);
+	private state: WritableSignal<PortalState> = signal<PortalState>({
 		content: null,
 		isOpen: false,
 		animation: null,
@@ -19,8 +19,8 @@ export class ModalService {
 	private closeAnimationSpeed = 300;
 	private readonly router = inject(Router);
 	private readonly actRouter = inject(ActivatedRoute);
-	
-	modalState = this.state.asReadonly();
+
+	portalState = this.state.asReadonly();
 
 	/**
 	 * Получает текущую скорость анимации закрытия модального окна в миллисекундах
@@ -40,29 +40,29 @@ export class ModalService {
 
 	/**
 	 * Получает текущее состояние модального окна
-	 * @returns {ModalState} Текущее состояние модального окна
+	 * @returns {PortalState} Текущее состояние модального окна
 	 */
-	get stateValue(): ModalState {
+	get stateValue(): PortalState {
 		return this.state();
 	}
 
 	/**
 	 * Вычисляемое свойство, возвращающее количество модальных окон в очереди
 	 */
-	modalQueueLength = computed(() => this.modalQueue().length);
+	portalQueueLength = computed(() => this.portalQueue().length);
 
 	/**
 	 * Открывает модальное окно с указанным содержимым
 	 * @param {Type<any> | TemplateRef<any>} content - Компонент или шаблон для отображения в модальном окне
 	 * @param {boolean} [withOverlay=true] - Показывать ли полупрозрачный оверлей за модальным окном
-	 * @param {ModalData} [data] - Данные для передачи в модальное окно
+	 * @param {PortalData} [data] - Данные для передачи в модальное окно
 	 */
-	openModal(
-		content: Type<any> | TemplateRef<any>,
-		withOverlay: boolean = true,
-		data?: ModalData
+	openPortal(
+		content: Type<unknown> | TemplateRef<unknown>,
+		withOverlay = true,
+		data?: PortalData
 	) {
-		const newModal: ModalState = {
+		const newModal: PortalState = {
 			content,
 			isOpen: false,
 			animation: null,
@@ -70,10 +70,10 @@ export class ModalService {
 			data: data || {},
 		};
 		// Добавляем новое модальное окно в очередь
-		this.modalQueue.update(queue => [...queue, newModal]);
+		this.portalQueue.update(queue => [...queue, newModal]);
 		// Если окно еще не открыто (очередь только что пополнилась)
-		if (this.modalQueue().length === 1) {
-			this.showNextModal();
+		if (this.portalQueue().length === 1) {
+			this.showNextPortal();
 		}
 	}
 
@@ -81,18 +81,18 @@ export class ModalService {
 	 * Закрывает текущее активное модальное окно с анимацией
 	 * После закрытия автоматически показывает следующее модальное окно из очереди, если таковое имеется
 	 */
-	closeModal() {
-		if (this.modalQueue().length === 0) {
+	closePortal() {
+		if (this.portalQueue().length === 0) {
 			return;
 		}
-		const currentModal = this.modalQueue()[0];
+		const currentModal = this.portalQueue()[0];
 		currentModal.animation = 'close';
 		this.state.set(currentModal);
 
 		timer(this.closeAnimationSpeed).subscribe(() => {
-			if (this.modalQueue().length > 0) {
-				this.modalQueue.set(this.modalQueue().slice(1));
-				this.showNextModal();
+			if (this.portalQueue().length > 0) {
+				this.portalQueue.set(this.portalQueue().slice(1));
+				this.showNextPortal();
 			} else {
 				this.state.set({
 					content: null,
@@ -109,12 +109,12 @@ export class ModalService {
 	 * Закрывает текущее модальное окно и открывает новое с указанным содержимым
 	 * @param {Type<any> | TemplateRef<any>} content - Компонент или шаблон для отображения в новом модальном окне
 	 * @param {boolean} [withOverlay=true] - Показывать ли полупрозрачный оверлей за модальным окном
-	 * @param {ModalData} [data] - Данные для передачи в новое модальное окно
+	 * @param {PortalData} [data] - Данные для передачи в новое модальное окно
 	 */
-	toggleModal(content: Type<any> | TemplateRef<any>, withOverlay: boolean = true, data?: ModalData) {
-		this.closeModal();
+	togglePortal(content: Type<unknown> | TemplateRef<unknown>, withOverlay = true, data?: PortalData) {
+		this.closePortal();
 		timer(this.closeAnimationSpeed).subscribe(() => {
-			this.openModal(content, withOverlay, data);
+			this.openPortal(content, withOverlay, data);
 		});
 	}
 
@@ -125,16 +125,16 @@ export class ModalService {
 	 */
 	async closeAndNavigate(link: string) {
 		await this.router.navigate([link], { relativeTo: this.actRouter });
-		timer(this.closeAnimationSpeed).subscribe(() => this.closeModal());
+		timer(this.closeAnimationSpeed).subscribe(() => this.closePortal());
 	}
 
 	/**
 	 * Показывает следующее модальное окно из очереди или сбрасывает состояние, если очередь пуста
 	 * @private
 	 */
-	private showNextModal() {
-		if (this.modalQueue().length > 0) {
-			const modal = this.modalQueue()[0];
+	private showNextPortal() {
+		if (this.portalQueue().length > 0) {
+			const modal = this.portalQueue()[0];
 			modal.isOpen = true;
 			modal.animation = 'open';
 			this.state.set(modal);

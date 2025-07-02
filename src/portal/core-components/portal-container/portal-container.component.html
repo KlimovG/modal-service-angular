@@ -1,0 +1,24 @@
+<div
+	class="portal-container"
+	[style.visibility]="portalState().isOpen ? 'visible' : 'hidden'"
+	[class.open]="portalState().animation === 'open'"
+	[class.close]="portalState().animation === 'close'"
+	[class.with-overlay]="portalState().withOverlay">
+	<div
+		class="portal-component"
+		[style.visibility]="portalState().isOpen ? 'visible' : 'hidden'"
+		[class.open]="portalState().animation === 'open'"
+		[class.close]="portalState().animation === 'close'">
+		@if (isTemplateRef(portalState().content)) {
+			<ng-container
+				[ngTemplateOutlet]="templateContent()"
+				[ngTemplateOutletContext]="{ data: portalState().data }"
+			></ng-container>
+		} @else if (componentContent()) {
+			<ng-container
+				[ngComponentOutlet]="componentContent()"
+				[ngComponentOutletInputs]="portalState().data">
+			</ng-container>
+		}
+	</div>
+</div>
