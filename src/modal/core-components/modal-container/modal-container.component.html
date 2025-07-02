@@ -9,10 +9,10 @@
 		[style.visibility]="modalState().isOpen ? 'visible' : 'hidden'"
 		[class.open]="modalState().animation === 'open'"
 		[class.close]="modalState().animation === 'close'">
-		@if (templateContent()) {
+		@if (isTemplateRef(modalState().content)) {
 			<ng-container
 				[ngTemplateOutlet]="templateContent()"
-				[ngTemplateOutletContext]="modalState().data"
+				[ngTemplateOutletContext]="{ data: modalState().data }"
 			></ng-container>
 		} @else if (componentContent()) {
 			<ng-container

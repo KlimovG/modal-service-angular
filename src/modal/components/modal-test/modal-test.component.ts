@@ -6,9 +6,10 @@ import { ModalService } from '@modal/service/modal.service';
 	template: `
 		<div class="modal-component__container">
 			<div class="test">
-				<h2 class="test__title title title__level--1">Выбери действие с модалками</h2>
-				<button class="test__btn btn btn--secondary" (click)="toggleModal()">Открыть другую модалку</button>
-				<button class="test__btn btn btn--primary" (click)="closeModal()">Закрыть модалку</button>
+				<h2 class="test__title">Выбери действие с модалками</h2>
+				<button class="test__btn" (click)="toggleModal()">Переключить модалку</button>
+				<button class="test__btn" (click)="openModal()">Добавить модалку в очередь</button>
+				<button class="test__btn" (click)="closeModal()">Закрыть модалку</button>
 			</div>
 		</div>
 	`,
@@ -17,6 +18,10 @@ import { ModalService } from '@modal/service/modal.service';
 })
 export class ModalTestComponent {
 	private readonly modalService: ModalService = inject(ModalService);
+
+	openModal() {
+		this.modalService.openModal(ModalTestComponent);
+	}
 
 	toggleModal() {
 		this.modalService.toggleModal(ModalTestComponent);

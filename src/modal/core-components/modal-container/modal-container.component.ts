@@ -1,4 +1,4 @@
-import { Component, Type, input, ChangeDetectionStrategy, TemplateRef, computed, Signal } from '@angular/core';
+import { Component, Type, input, ChangeDetectionStrategy, TemplateRef, computed } from '@angular/core';
 import { ModalState } from '@modal/ts/modal-state.interface';
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 
@@ -17,11 +17,14 @@ export class ModalContainerComponent {
 		return content instanceof TemplateRef;
 	}
 
-	public templateContent: Signal<TemplateRef<any> | undefined> = computed(() =>
-		this.isTemplateRef(this.modalState().content) ? (this.modalState().content as TemplateRef<any>) : undefined
-	);
+	public templateContent = computed(() => {
+		const content = this.modalState().content;
+		return this.isTemplateRef(content) ? content : null;
+	});
 
-	public componentContent: Signal<Type<any> | undefined> = computed(() =>
-		!this.isTemplateRef(this.modalState().content) ? (this.modalState().content as Type<any>) : undefined
-	);
+	public componentContent = computed(() => {
+		const content = this.modalState().content;
+		return !this.isTemplateRef(content) ? content : null;
+	});
+
 }

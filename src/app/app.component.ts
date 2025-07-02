@@ -1,10 +1,11 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { SmartModalContainerComponent, ModalService } from "../modal";
+import { JsonPipe } from '@angular/common';
 import { ModalTestComponent } from '@modal/components/modal-test/modal-test.component';
 
 @Component({
   selector: 'app-root',
-  imports: [SmartModalContainerComponent],
+  imports: [SmartModalContainerComponent, JsonPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

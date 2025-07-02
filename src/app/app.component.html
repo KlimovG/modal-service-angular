@@ -1,7 +1,9 @@
 <app-smart-modal-container></app-smart-modal-container>
 
 <button (click)="openModal()">Open Modal</button>
-<ng-template #myTemplate>
-  <h2>Привет, Егор!</h2>
-  <p>Твой ID: 333</p>
+<ng-template #myTemplate let-data="data">
+  <h2>Debug Data in template: {{ data | json }}</h2>
+  @if (!data) {
+    <h2>Данные отсутствуют или undefined в шаблоне.</h2>
+  }
 </ng-template>
