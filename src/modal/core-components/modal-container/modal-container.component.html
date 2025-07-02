@@ -1,19 +1,17 @@
 <div
 	class="modal-container"
-	[ngStyle]="{ visibility: modalState.isOpen ? 'visible' : 'hidden' }"
-	[ngClass]="{
-		open: modalState.animation === 'open',
-		close: modalState.animation === 'close',
-		'with-overlay': modalState.withOverlay
-	}">
+	[style.visibility]="modalState().isOpen ? 'visible' : 'hidden'"
+	[class.open]="modalState().animation === 'open'"
+	[class.close]="modalState().animation === 'close'"
+	[class.with-overlay]="modalState().withOverlay">
 	<div
 		class="modal-component"
-		[ngStyle]="{ visibility: modalState.isOpen ? 'visible' : 'hidden' }"
-		[ngClass]="{
-			open: modalState.animation === 'open',
-			close: modalState.animation === 'close'
-		}">
+		[style.visibility]="modalState().isOpen ? 'visible' : 'hidden'"
+		[class.open]="modalState().animation === 'open'"
+		[class.close]="modalState().animation === 'close'">
 		<ng-container
-			*ngComponentOutlet="activeModal; inputs: modalState.data"></ng-container>
+			[ngComponentOutlet]="activeModal"
+			[ngComponentOutletInputs]="modalState().data">
+		</ng-container>
 	</div>
 </div>

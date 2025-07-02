@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed, WritableSignal } from '@angular/core';
+import { timer } from 'rxjs';
 import { ModalState } from '@modal/ts/modal-state.interface';
 import { ModalType } from '@modal/ts/modal-type.enum';
 import { ModalData } from '@modal/ts/modal-data.type';
@@ -8,24 +8,21 @@ import { ModalData } from '@modal/ts/modal-data.type';
 	providedIn: 'root',
 })
 export class ModalService {
-	private modalQueue: ModalState[] = [];
-	private state$ = new BehaviorSubject<ModalState>({
+	private modalQueue: WritableSignal<ModalState[]> = signal<ModalState[]>([]);
+	private state: WritableSignal<ModalState> = signal<ModalState>({
 		type: null,
 		isOpen: false,
 		animation: null,
 		withOverlay: true,
 	});
 	private closeAnimationSpeed = 300;
-	private errorDelay = 0; // задержка для модалок ошибок
-	public modalState$: Observable<ModalState> = this.state$.asObservable();
+	public modalState = this.state.asReadonly();
 
-	public get state(): ModalState {
-		return this.state$.value;
+	public get stateValue(): ModalState {
+		return this.state();
 	}
 
-	public get modalQueueLength(): number {
-		return this.modalQueue.length;
-	}
+	public modalQueueLength = computed(() => this.modalQueue().length);
 
 	public openModal(
 		type: ModalType,
@@ -40,21 +37,21 @@ export class ModalService {
 			data,
 		};
 		// Добавляем новое модальное окно в очередь
-		this.modalQueue.push(newModal);
+		this.modalQueue.update(queue => [...queue, newModal]);
 		// Если окно еще не открыто (очередь только что пополнилась)
-		if (this.modalQueue.length === 1) {
+		if (this.modalQueue().length === 1) {
 			this.showNextModal();
 		}
 	}
 
 	private showNextModal() {
-		if (this.modalQueue.length > 0) {
-			const modal = this.modalQueue[0];
+		if (this.modalQueue().length > 0) {
+			const modal = this.modalQueue()[0];
 			modal.isOpen = true;
 			modal.animation = 'open';
-			this.state$.next(modal);
+			this.state.set(modal);
 		} else {
-			this.state$.next({
+			this.state.set({
 				type: null,
 				isOpen: false,
 				animation: null,
@@ -65,19 +62,19 @@ export class ModalService {
 	}
 
 	public closeModal() {
-		if (this.modalQueue.length === 0) {
+		if (this.modalQueue().length === 0) {
 			return;
 		}
-		const currentModal = this.modalQueue[0];
+		const currentModal = this.modalQueue()[0];
 		currentModal.animation = 'close';
-		this.state$.next(currentModal);
+		this.state.set(currentModal);
 
-		setTimeout(() => {
-			if (this.modalQueue.length > 0) {
-				this.modalQueue.shift();
+		timer(this.closeAnimationSpeed).subscribe(() => {
+			if (this.modalQueue().length > 0) {
+				this.modalQueue.set(this.modalQueue().slice(1));
 				this.showNextModal();
 			} else {
-				this.state$.next({
+				this.state.set({
 					type: null,
 					isOpen: false,
 					animation: null,
@@ -85,7 +82,7 @@ export class ModalService {
 					data: null,
 				});
 			}
-		}, this.closeAnimationSpeed + 1);
+		});
 	}
 
 	public showNextModalImmediate(
@@ -94,8 +91,8 @@ export class ModalService {
 		data?: ModalData
 	) {
 		this.closeModal();
-		setTimeout(() => {
+		timer(this.closeAnimationSpeed).subscribe(() => {
 			this.openModal(type, withOverlay, data);
-		}, this.closeAnimationSpeed);
+		});
 	}
 }

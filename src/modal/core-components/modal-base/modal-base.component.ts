@@ -1,34 +1,35 @@
 import {
 	Component,
 	inject,
-	Input,
 	OnDestroy,
 	Signal,
 	signal,
+	input,
+	ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalService } from '../../service/modal.service';
 import { ModalShowAnimationType } from '@modal/ts/modal-show-animation.type';
 import { ModalType } from '@modal/ts/modal-type.enum';
 import { ModalData } from '@modal/ts/modal-data.type';
+import { timer } from 'rxjs';
 
 @Component({
 	selector: 'app-modal-base',
 	template: '',
 	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalBaseComponent {
-	@Input() animation: ModalShowAnimationType;
+	public animation = input<ModalShowAnimationType | undefined>();
 	readonly modal = inject(ModalService);
 	readonly router = inject(Router);
 	readonly actRouter = inject(ActivatedRoute);
 	animationEnds$ = signal<boolean>(false);
 
 	constructor() {
-		requestAnimationFrame(() => {
-			setTimeout(() => {
-				this.animationEnds$.set(true);
-			});
+		timer(0).subscribe(() => {
+			this.animationEnds$.set(true);
 		});
 	}
 
@@ -38,9 +39,9 @@ export class ModalBaseComponent {
 
 	toggleModal(type: ModalType, withOverlay: boolean = true, data?: ModalData) {
 		this.closeModal();
-		setTimeout(() => {
+		timer(300).subscribe(() => {
 			this.openModal(type, withOverlay, data);
-		}, 300);
+		});
 	}
 
 	openModal(type: ModalType, withOverlay: boolean = true, data?: ModalData) {
@@ -49,6 +50,6 @@ export class ModalBaseComponent {
 
 	async closeAndNavigate(link: string) {
 		await this.router.navigate([link], { relativeTo: this.actRouter });
-		setTimeout(() => this.closeModal(), 200);
+		timer(300).subscribe(() => this.closeModal());
 	}
 }
