@@ -76,14 +76,6 @@ export class ModalService {
 			if (this.modalQueue().length > 0) {
 				this.modalQueue.set(this.modalQueue().slice(1));
 				this.showNextModal();
-			} else {
-				this.state.set({
-					content: null,
-					isOpen: false,
-					animation: null,
-					withOverlay: true,
-					data: null,
-				});
 			}
 		});
 	}

@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { SmartModalContainerComponent, ModalService } from "../modal";
-import { ModalExitComponent } from '@modal/components/modal-exit/modal-exit.component';
+import { ModalTestComponent } from '@modal/components/modal-test/modal-test.component';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +11,9 @@ import { ModalExitComponent } from '@modal/components/modal-exit/modal-exit.comp
 export class AppComponent {
   title = 'portal-service';
   private readonly modalService: ModalService = inject(ModalService);
+  @ViewChild('myTemplate') myTemplate!: TemplateRef<any>;
 
   openModal() {
-    this.modalService.openModal(ModalExitComponent);
+      this.modalService.openModal(ModalTestComponent, false, { name: 'Егор', id: 333 });
   }
 }
