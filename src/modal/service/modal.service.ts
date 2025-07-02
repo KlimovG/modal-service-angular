@@ -22,20 +22,41 @@ export class ModalService {
 	
 	modalState = this.state.asReadonly();
 
+	/**
+	 * Получает текущую скорость анимации закрытия модального окна в миллисекундах
+	 * @returns {number} Скорость анимации в миллисекундах
+	 */
 	get animationSpeed(): number {
 		return this.closeAnimationSpeed;
 	}
 
+	/**
+	 * Устанавливает скорость анимации закрытия модального окна
+	 * @param {number} speed - Скорость анимации в миллисекундах
+	 */
 	set animationSpeed(speed: number) {
 		this.closeAnimationSpeed = speed;
 	}
 
+	/**
+	 * Получает текущее состояние модального окна
+	 * @returns {ModalState} Текущее состояние модального окна
+	 */
 	get stateValue(): ModalState {
 		return this.state();
 	}
 
-	 modalQueueLength = computed(() => this.modalQueue().length);
+	/**
+	 * Вычисляемое свойство, возвращающее количество модальных окон в очереди
+	 */
+	modalQueueLength = computed(() => this.modalQueue().length);
 
+	/**
+	 * Открывает модальное окно с указанным содержимым
+	 * @param {Type<any> | TemplateRef<any>} content - Компонент или шаблон для отображения в модальном окне
+	 * @param {boolean} [withOverlay=true] - Показывать ли полупрозрачный оверлей за модальным окном
+	 * @param {ModalData} [data] - Данные для передачи в модальное окно
+	 */
 	openModal(
 		content: Type<any> | TemplateRef<any>,
 		withOverlay: boolean = true,
@@ -56,6 +77,10 @@ export class ModalService {
 		}
 	}
 
+	/**
+	 * Закрывает текущее активное модальное окно с анимацией
+	 * После закрытия автоматически показывает следующее модальное окно из очереди, если таковое имеется
+	 */
 	closeModal() {
 		if (this.modalQueue().length === 0) {
 			return;
@@ -80,6 +105,12 @@ export class ModalService {
 		});
 	}
 
+	/**
+	 * Закрывает текущее модальное окно и открывает новое с указанным содержимым
+	 * @param {Type<any> | TemplateRef<any>} content - Компонент или шаблон для отображения в новом модальном окне
+	 * @param {boolean} [withOverlay=true] - Показывать ли полупрозрачный оверлей за модальным окном
+	 * @param {ModalData} [data] - Данные для передачи в новое модальное окно
+	 */
 	toggleModal(content: Type<any> | TemplateRef<any>, withOverlay: boolean = true, data?: ModalData) {
 		this.closeModal();
 		timer(this.closeAnimationSpeed).subscribe(() => {
@@ -87,11 +118,20 @@ export class ModalService {
 		});
 	}
 
+	/**
+	 * Закрывает модальное окно и выполняет навигацию по указанному маршруту
+	 * @param {string} link - Маршрут для навигации
+	 * @returns {Promise<void>} Promise, который разрешается после завершения навигации
+	 */
 	async closeAndNavigate(link: string) {
 		await this.router.navigate([link], { relativeTo: this.actRouter });
 		timer(this.closeAnimationSpeed).subscribe(() => this.closeModal());
 	}
 
+	/**
+	 * Показывает следующее модальное окно из очереди или сбрасывает состояние, если очередь пуста
+	 * @private
+	 */
 	private showNextModal() {
 		if (this.modalQueue().length > 0) {
 			const modal = this.modalQueue()[0];
